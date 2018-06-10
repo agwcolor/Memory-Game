@@ -1,18 +1,22 @@
 /*
  * Create a list that holds all of your cards
  */
-
-
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
+ const pair1 = "fa-diamond";
+ const pair2 = "fa-anchor";
+ const pair3 = "fa-leaf";
+ const pair4 = "fa-bomb";
+  const pair5 = "fa-paper-plane-o";
+ const pair6 = "fa-bolt";
+ const pair7 = "fa-cube";
+ const pair8 = "fa-bicyle";
+const deck = [pair1, pair2, pair3, pair4, pair5, pair6, pair7, pair8]
+console.log(deck);
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var currentIndex = array.length, 
+    temporaryValue, 
+    randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -24,6 +28,42 @@ function shuffle(array) {
 
     return array;
 }
+/*
+ * Display the cards on the page
+ *   - shuffle the list of cards using the provided "shuffle" method below
+ 
+ /*initialize page*/
+const cards = document.querySelectorAll('.card');
+const image = document.querySelectorAll('.fa');
+console.log(image);
+console.log(cards);
+for (i=0; i<cards.length; i++) {
+//for (const card of cards) {
+	console.log(cards[i]);
+cards[i].classList.remove("match", "open", "show");
+//image[i].classList.remove("fa-\*");
+cards[i].innerHTML = '';
+
+//cards[i].removeChild(image[i]);
+}
+
+console.log(image);
+console.log(cards);
+/*   - loop through each card and create its HTML
+ *   - add each card's HTML to the page
+ */
+
+const shuffledDecks = shuffle(deck);
+//for (const shuffledDeck of shuffledDecks) 
+for (i=0; i<cards.length; i++) {
+	const cardImage=`<i class="fa ${shuffledDecks[i]}"></i>`;
+	console.log(cardImage);
+	console.log(cards);
+	cards[i].innerHTML=cardImage;
+}
+
+
+
 
 
 /*
