@@ -3,9 +3,13 @@ let a = [];
 let totalOpenedCards = 0;
 let turnedCards = [];
 let timerActive = false;
-
-let moves = 0;
-let matches = 0;
+let moves;
+let matches;
+let msec=00;
+let sec=00;
+let min=00;
+let myTimer;
+let timerToggle=true;
 
 // Make Deck from chosen font mix
 function makeDeck(array) {
@@ -13,9 +17,9 @@ function makeDeck(array) {
     for (index in fontMix1) {
         deck.push(fontMix1[index]);
         deck.push(fontMix1[index]);
-        console.log(`This is the length of the fonts Array! --> ${deck.length}`);
+        //console.log(`This is the length of the fonts Array! --> ${deck.length}`);
     }
-    console.log(`Hey this is the deck at the start! --> ${deck}`);
+    //console.log(`Hey this is the deck at the start! --> ${deck}`);
     return deck;
 }
 
@@ -38,21 +42,58 @@ function shuffle(array) {
 /*
  * 'Turn over' the cards on the page by removing match/open/show classes
  /* Return array of .cards classes*/
-function startOver() {
+function startGame() {
+    moves = 0;
+    matches = 0;
+    msec=00;
+    sec=00;
+    min=00;
     const cards = document.querySelectorAll('.card');
+    //clear moves
     document.querySelector('.moves').innerText = "zero Moves";
-    console.log(cards);
+    //remove match open show classes
     for (i = 0; i < cards.length; i++) {
-        //for (const card of cards) {
         cards[i].classList.remove("match", "open", "show");
-        console.log(cards[i]);
-        console.log("I'm in the function start over!")
     }
+    //refresh stars 
+    stars = document.querySelector('.stars');
+    stars.innerHTML = "";
+    for (x = 0; x < 5; x++) {
+        //document.querySelector('.stars').innerHTML = `<li><i class="fa fa-star"></i>`;
+        stars.appendChild(document.createElement('li')).className = 'fa fa-star';
+    };
 
-    return cards;
+    /*make font array from chosen font mix*/
+    const fontsArray = makeDeck(fontMix1);
+
+    /*shuffle the fonts*/
+    const shuffledFonts = shuffle(fontsArray);
+
+    /*add shuffled fonts to html*/
+    for (i = 0; i < cards.length; i++) {
+        const cardImage = `<i class="fa fa-${shuffledFonts[i]}"></i>`;
+        cards[i].innerHTML = cardImage;
+        cards[i].addEventListener('click', displaySymbol);
+    }
+}
+
+function timer() {
+    msec += 1;
+    if (msec == 60) {
+        sec += 1;
+        msec = 00;
+        if (sec == 60) {
+            sec = 00;
+            min += 1;
+        }   
+    }
+    document.getElementById("timer").innerHTML = `${min} : ${sec} : ${msec}`;
 }
 
 function displaySymbol() {
+    if (msec === 0) 
+    {myTimer = setInterval(timer,1000)}; //update timer every second
+
     if (timerActive) {
         hideSymbol()
     };
@@ -111,7 +152,7 @@ function lockIntoOpen(a) {
     a[1].classList.add("match");
     a[0].removeEventListener('click', displaySymbol);
     a[1].removeEventListener('click', displaySymbol);
-    console.log(totalOpenedCards + " is total # of cards opened");
+    //console.log(totalOpenedCards + " is total # of cards opened");
     if (totalOpenedCards === 16) {
         displayWinMsg();
     }
@@ -139,14 +180,15 @@ function starCounter() {
     var stars = document.querySelector('.stars');
     console.log(moves + "this is the current number of moves");
     console.log(matches + "this is the current number of matches");
-    switch ((moves)-(matches*2)) {
+    //star removal -- also. don't remove star if player makes a match)
+    switch ((moves) - (matches * 2)) {
         case 6:
             stars.removeChild(stars.children[0]);
             break;
         case 14:
             stars.removeChild(stars.children[0]);
             break;
-        case 16:
+        case 18:
             stars.removeChild(stars.children[0]);
             break;
         case 20:
@@ -160,29 +202,14 @@ function starCounter() {
 //
 function displayWinMsg() {
     console.log('you won!');
-
-}
-
-function starRating() {
-    //5-1
-
 }
 
 //restart button + timer 
-
-/*   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- * - set up event listener for ea card 
- */
-const cards = startOver(); /*Start Game Over on refresh.  */
-const fontsArray = makeDeck(fontMix1); /*make font array from chosen font mix*/
-const shuffledFonts = shuffle(fontsArray); /*shuffle the fonts*/
-console.log("this is the shuffledFonts array that we are using to add event listeners to --> " + shuffledFonts);
-
-for (i = 0; i < cards.length; i++) {
-    const cardImage = `<i class="fa fa-${shuffledFonts[i]}"></i>`;
-    cards[i].innerHTML = cardImage;
-    cards[i].addEventListener('click', displaySymbol);
+startGame(); /*Start Game Over on refresh.  */
+document.querySelector('.restart').addEventListener('click', startGame);
+document.querySelector('.timer').addEventListener('click', myStopFunction);
+function myStopFunction() {
+    clearInterval(myTimer);
 }
 
 
