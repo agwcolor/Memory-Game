@@ -5,11 +5,11 @@ let turnedCards = [];
 let timerActive = false;
 let moves;
 let matches;
-let msec=00;
-let sec=00;
-let min=00;
+let msec = 00;
+let sec = 00;
+let min = 00;
 let myTimer;
-let timerToggle=true;
+let timerToggle = true;
 
 // Make Deck from chosen font mix
 function makeDeck(array) {
@@ -45,9 +45,9 @@ function shuffle(array) {
 function startGame() {
     moves = 0;
     matches = 0;
-    msec=00;
-    sec=00;
-    min=00;
+    msec = 00;
+    sec = 00;
+    min = 00;
     const cards = document.querySelectorAll('.card');
     //clear moves
     document.querySelector('.moves').innerText = "zero Moves";
@@ -85,14 +85,15 @@ function timer() {
         if (sec == 60) {
             sec = 00;
             min += 1;
-        }   
+        }
     }
     document.getElementById("timer").innerHTML = `${min} : ${sec} : ${msec}`;
 }
 
 function displaySymbol() {
-    if (msec === 0) 
-    {myTimer = setInterval(timer,1000)}; //update timer every second
+    if (msec === 0) {
+        myTimer = setInterval(timer, 1000)
+    }; //update timer every second
 
     if (timerActive) {
         hideSymbol()
@@ -201,13 +202,34 @@ function starCounter() {
 }
 //
 function displayWinMsg() {
-    console.log('you won!');
+    // Get the modal
+    var modal = document.getElementById('myModal');
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    modal.style.display = "block";
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        console.log('you won!');
+    }
 }
 
 //restart button + timer 
 startGame(); /*Start Game Over on refresh.  */
 document.querySelector('.restart').addEventListener('click', startGame);
 document.querySelector('.timer').addEventListener('click', myStopFunction);
+
 function myStopFunction() {
     clearInterval(myTimer);
 }
