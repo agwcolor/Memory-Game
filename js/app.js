@@ -1,15 +1,11 @@
 const fontMix1 = ["diamond", "anchor", "leaf", "bomb", "paper-plane-o", "bolt", "cube", "bicycle"]
-let a = [];
-let totalOpenedCards = 0;
+let pair = []; //2 element pair array
+let totalOpenedCards = 0; 
 let turnedCards = [];
-let timerActive = false;
-let moves;
+let moves; //total moves if divided by 2
 let matches;
-let msec = 00;
-let sec = 00;
-let min = 00;
+let totalSec = 00;
 let myTimer;
-let timerToggle = true;
 
 // Make Deck from chosen font mix
 function makeDeck(array) {
@@ -45,13 +41,23 @@ function shuffle(array) {
 function startGame() {
     moves = 0;
     matches = 0;
-    msec = 00;
-    sec = 00;
+    totalSec = 0;
+    /*sec = 00;
     min = 00;
-    const cards = document.querySelectorAll('.card');
-    //clear moves
+    hour = 00;*/
+    totalOpenedCards = 0;
+
+    myStopFunction(); //stop timer if running
+    //document.getElementById("timer").innerHTML = `${hour} : ${min} : ${sec}`; 
+    document.getElementById("timer").innerHTML = `00 : 00 : 00`; //reset timer to 0
+
+    //reset moves to 0
     document.querySelector('.moves').innerText = "zero Moves";
+
     //remove match open show classes
+    const cards = document.querySelectorAll('.card');
+
+    //clear moves
     for (i = 0; i < cards.length; i++) {
         cards[i].classList.remove("match", "open", "show");
     }
@@ -69,7 +75,7 @@ function startGame() {
     /*shuffle the fonts*/
     const shuffledFonts = shuffle(fontsArray);
 
-    /*add shuffled fonts to html*/
+    /*add shuffled font styles to <li> html*/
     for (i = 0; i < cards.length; i++) {
         const cardImage = `<i class="fa fa-${shuffledFonts[i]}"></i>`;
         cards[i].innerHTML = cardImage;
@@ -77,40 +83,60 @@ function startGame() {
     }
 }
 
-function timer() {
-    msec += 1;
-    if (msec == 60) {
-        sec += 1;
-        msec = 00;
-        if (sec == 60) {
-            sec = 00;
-            min += 1;
+//timer
+/*function timer() {
+    sec += 1;
+    if (sec == 60) {
+        min += 1;
+        sec = 00;
+        if (min == 60) {
+            min = 00;
+            hour += 1;
         }
     }
-    document.getElementById("timer").innerHTML = `${min} : ${sec} : ${msec}`;
+    document.getElementById("timer").innerHTML = `${hour} : ${min} : ${sec}`;
+}*/
+
+function timer() {
+
+    let hour; let min; let sec;
+    totalSec += 1;
+    hour = parseInt(totalSec/3600)%24;
+    min = parseInt(totalSec/60)%60;
+    sec = totalSec%60;
+
+    document.getElementById("timer").innerHTML = 
+    ` ${hour< 10 ? (`0${hour}`) : (`${hour}`)} :
+      ${min < 10 ? (`0${min}`)  : (`${min}`)}  : 
+      ${sec < 10 ? (`0${sec}`)  : (`${sec}`)} 
+    ` ;
 }
 
-function displaySymbol() {
-    if (msec === 0) {
-        myTimer = setInterval(timer, 1000)
-    }; //update timer every second
 
-    if (timerActive) {
-        hideSymbol()
-    };
+/*document.getElementById("timer").innerHTML = `${hour} : ${min} : ${sec}`;
+}*/
+
+function displaySymbol() {
+    if (moves === 0) {
+        myTimer = setInterval(timer, 1000)
+    }; //run timer every second
+
+    /*if (timerActive) {
+        hideSymbol() 
+    };*/
     if (this.classList.contains("show")) {
         alert("You already clicked that. try another");
 
     } else {
         this.classList.add("open", "show");
         openCard = this;
-        console.log("This is the value of openCard in displaySymbol function (objectHTMLLIElement)--> " + openCard);
+        //console.log("This is the value of openCard in displaySymbol function (objectHTMLLIElement)--> " + openCard);
         openCardList(openCard);
     }
 }
 
 function openCardList(e) {
-    a.push(e);
+    pair.push(e);
     //console.log(a[0].classList + "is value of a[0].classList");
     len = turnedCards.length;
     //console.log("This is the value of" + len + " length of array");
@@ -127,15 +153,15 @@ function openCardList(e) {
             console.log("this is a match!");
             matches++;
             turnedCards = [];
-            lockIntoOpen(a);
-            a = [];
+            lockIntoOpen(pair);
+            pair = [];
 
         } else {
             console.log("Try again"); //add function
             //console.log("this is the array of a " + a);
             //console.log("this is a[0]" + a[0].classList, "This is a[1]" + a[1].classList);
             timerActive = true;
-            setTimeout(hideSymbol, 1000);
+            setTimeout(hideSymbol, 2000);
             turnedCards = [];
             //console.log(e + "  this is what I'm passing to hideSymbol")
 
@@ -146,26 +172,30 @@ function openCardList(e) {
 
 }
 
+//lock pair open / remove evt listener / add match class
 function lockIntoOpen(a) {
     console.log("it's a match!");
     totalOpenedCards += 2;
-    a[0].classList.add("match");
-    a[1].classList.add("match");
-    a[0].removeEventListener('click', displaySymbol);
-    a[1].removeEventListener('click', displaySymbol);
-    //console.log(totalOpenedCards + " is total # of cards opened");
+    pair[0].classList.add("match");
+    pair[1].classList.add("match");
+    pair[0].removeEventListener('click', displaySymbol);
+    pair[1].removeEventListener('click', displaySymbol);
+    console.log(totalOpenedCards + " is total # of cards opened");
     if (totalOpenedCards === 16) {
-        displayWinMsg();
+        myStopFunction(); // stop timer
+
+        displayWinMsg(); // display win message if all cards opened
     }
 }
 
+//hide incorrect pair by removing open / show classes. reset pair array a to 0.
 function hideSymbol() {
-    console.log("This is the value of a at hideSymbol -->" + a);
+    //console.log("This is the value of a at hideSymbol -->" + a);
     timerActive = false;
-    a[0].classList.remove("open", "show");
-    a[1].classList.remove("open", "show");
-    console.log(" This is a[0]" + a[0].classList, "This is a[1]" + a[1].classList);
-    a = [];
+    pair[0].classList.remove("open", "show");
+    pair[1].classList.remove("open", "show");
+    //console.log(" This is a[0]" + a[0].classList, "This is a[1]" + a[1].classList);
+    pair = [];
 
     console.log("I removed open & show classes");
 }
@@ -183,56 +213,68 @@ function starCounter() {
     console.log(matches + "this is the current number of matches");
     //star removal -- also. don't remove star if player makes a match)
     switch ((moves) - (matches * 2)) {
-        case 6:
-            stars.removeChild(stars.children[0]);
-            break;
-        case 14:
-            stars.removeChild(stars.children[0]);
-            break;
-        case 18:
-            stars.removeChild(stars.children[0]);
-            break;
         case 20:
             stars.removeChild(stars.children[0]);
             break;
         case 30:
             stars.removeChild(stars.children[0]);
             break;
+        case 40:
+            stars.removeChild(stars.children[0]);
+            break;
+        case 50:
+            stars.removeChild(stars.children[0]);
+            break;
+        case 60:
+            stars.removeChild(stars.children[0]);
+            break;
     }
 }
 //
 function displayWinMsg() {
-    // Get the modal
-    var modal = document.getElementById('myModal');
+    //  the modal
+    var modal = document.getElementById('winModal');
 
-    // Get the <span> element that closes the modal
+    // close fa icon
     var span = document.getElementsByClassName("close")[0];
 
-    // When the user clicks the button, open the modal 
+    //open the modal 
     modal.style.display = "block";
+    //add star rating and time to modal
+    var congrats = document.querySelector(".congrats");
+    var stats = document.createElement('div');
+    stats.className = 'stats';
 
-    // When the user clicks on <span> (x), close the modal
+    var starCount = document.querySelector(".stars").getElementsByTagName("li").length
+
+    stats.innerHTML =  `<p>${starCount} Stars</p><p>Time: ${min} min : ${sec} sec</p>`;
+    congrats.appendChild(stats);    
+
+    //close the modal when x is clicked
     span.onclick = function() {
         modal.style.display = "none";
     }
 
-    // When the user clicks outside of the modal, close it
+    // if click outside modal, also close it
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
-        console.log('you won!');
     }
 }
+
+function myStopFunction() {
+    console.log("stop the timer!");
+    clearInterval(myTimer);
+}
+
+
 
 //restart button + timer 
 startGame(); /*Start Game Over on refresh.  */
 document.querySelector('.restart').addEventListener('click', startGame);
 document.querySelector('.timer').addEventListener('click', myStopFunction);
 
-function myStopFunction() {
-    clearInterval(myTimer);
-}
 
 
 
