@@ -258,59 +258,31 @@ function myStopFunction() {
     clearInterval(myTimer);
 }
 
-//restart button + timer 
-startGame(); /*Start Game Over on refresh.  */
+//start game on refresh
+startGame();
+
+//restart button
 document.querySelector('.restart').addEventListener('click', startGame);
+
+//stop timer if it's bugging you or distracting
 document.querySelector('.timer').addEventListener('click', myStopFunction);
-/*document.getElementById('dropdown').addEventListener('onchange', function() {var x = mySelect.value;
-   console.log(x + "is the font selection");
-    fontMix = x;
-    console.log(fontMix + "is now");
-    startGame();
-});*/
+
+//choose font mix for game, dropdown menu --- (1 - 4)
+document.getElementById('dropdown').addEventListener('change', function() {
+    var x = this.value;
+    startGame(x);
+});
+
+
+
 
 //var x = document.getElementById("mySelect").options.namedItem("orange").text;
-var mySelect = document.getElementById('dropdown');
+/*var mySelect = document.getElementById('dropdown');
 mySelect.onchange = function() {
     var x = mySelect.value;
    console.log(x + "is the id value of the font selection");
     startGame(x);
- }
- 
-
-/*
-function chooseIcons() {
-var x = document.getElementById("dropdown").options[0].text;
-console.log(x + "is the font selection");
-fontMix = x;
-startGame();
-}
-
-*/
-
-/* When the user clicks on the button, 
-toggle between hiding and showing the dropdown content */
-/*function myFunction() {
-    document.getElementById("myDropdown").classList.toggle("show-dropdown");
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show-dropdown')) {
-        openDropdown.classList.remove('show-dropdown');
-      }
-    }
-  }
-}
-*/
-
-    
+ }*/
 
 
 /*

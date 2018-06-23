@@ -26,6 +26,7 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
 }
 
 h1 {
@@ -50,7 +51,11 @@ h1 {
 .deck {
     width: 660px;
     min-height: 680px;
-    background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);
+    /*background: linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%);*/
+    /*background-image: url("paper.gif");*/
+    background-image: url("img/hillyflowers_sm.jpg");
+
+
     padding: 32px;
     border-radius: 10px;
     box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
@@ -59,6 +64,12 @@ h1 {
     justify-content: space-between;
     align-items: center;
     margin: 0 0 3em;
+}
+
+.deck .reveal {
+    background-image: url("img/hillyflowers_sm.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
 }
 
 .deck .card {
@@ -98,6 +109,14 @@ h1 {
 .deck .card.show {
     font-size: 33px;
     /*animation-name: showCard;*/
+    /*-webkit-animation: myName 10s ease infinite;
+    -moz-animation: myName 10s ease infinite;
+    animation: myName 10s ease infinite;*/
+    animation-duration: 1s;
+}
+
+.deck .card.reveal {
+    background: transparent;    /*animation-name: showCard;*/
     /*-webkit-animation: myName 10s ease infinite;
     -moz-animation: myName 10s ease infinite;
     animation: myName 10s ease infinite;*/
