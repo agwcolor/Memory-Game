@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <title>Matching Game</title>
     <meta name="description" content="">
-    <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
+
+
+    <!--<link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">-->
     <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Coda">
     <link href="https://fonts.googleapis.com/css?family=Montserrat&effect=neon" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Rancho&effect=neon" rel="stylesheet">
@@ -20,18 +25,36 @@
 
         <section class="score-panel">
         	<ul class="stars">
-        		<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
-        		<li><i class="fa fa-star"></i></li>
-                <li><i class="fa fa-star"></i></li>
-                <li><i class="fa fa-star"></i></li>
+        		<li><i class="fas fa-star"></i></li>
+        		<li><i class="fas fa-star"></i></li>
+        		<li><i class="fas fa-star"></i></li>
+                <li><i class="fas fa-star"></i></li>
+                <li><i class="fas fa-star"></i></li>
         	</ul>
 
         	<span class="moves">3 Moves</span> 
 
             <div class="restart">
-        		<i class="fa fa-repeat"></i>
+        		<i class="fas fa-redo-alt"></i>
             </div>
+
+            <!-- <div class="dropdown">
+            <button onclick="myFunction()" class="dropbtn">Icon Set</button>
+                <div id="myDropdown" class="dropdown-content">
+                <a href="#funny">Funny</a>
+                <a href="#weird">Weird</a>
+                <a href="#spacy">Spacy</a>
+                </div>
+            </div> -->
+
+            <form>
+  <select id="dropdown">
+    <option id="1">Mix1</option>
+    <option id="2">Mix2</option>
+    <option id="3">Mix3</option>
+    <option id="4">Mix4</option>
+  </select>
+</form>
         </section>
 
         <ul class="deck">

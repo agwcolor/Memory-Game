@@ -1,4 +1,7 @@
-const fontMix1 = ["diamond", "anchor", "leaf", "bomb", "paper-plane-o", "bolt", "cube", "bicycle"]
+const fontMix1 = ["gem", "anchor", "leaf", "bomb", "paper-plane", "bolt", "cube", "bicycle"];
+const fontMix3 = ["grimace", "meh-rolling-eyes", "grin-tongue", "grin-stars", "grin-hearts", "grin-tongue-squint", "grin-wink", "grin-tongue-wink"];
+const fontMix4 = ["bug", "crow", "chess-knight","dove", "fish", "frog", "kiwi-bird","child"];
+const fontMix2 = ["lemon", "seedling", "tooth", "tree", "sun", "stroopwafel", "space-shuttle", "paw"];
 let pair = []; //2 element pair array
 let totalOpenedCards = 0; 
 let turnedCards = [];
@@ -6,16 +9,17 @@ let moves; //total moves if divided by 2
 let matches;
 let totalSec = 00;
 let myTimer;
+let fontMix = [];
 
 // Make Deck from chosen font mix
 function makeDeck(array) {
+    console.log("This is the value of fontMix in the makeDeck array" + fontMix);
+
     let deck = [];
-    for (index in fontMix1) {
-        deck.push(fontMix1[index]);
-        deck.push(fontMix1[index]);
-        //console.log(`This is the length of the fonts Array! --> ${deck.length}`);
+    for (index in fontMix) {
+        deck.push(fontMix[index]);
+        deck.push(fontMix[index]);
     }
-    //console.log(`Hey this is the deck at the start! --> ${deck}`);
     return deck;
 }
 
@@ -38,17 +42,32 @@ function shuffle(array) {
 /*
  * 'Turn over' the cards on the page by removing match/open/show classes
  /* Return array of .cards classes*/
-function startGame() {
+function startGame(e) {
+    console.log("This is the value of fontMix at the start of the game" + fontMix);
+    console.log("This is the value of e at the start of the game" + e); 
+    switch(e) {
+    case 'Mix1':
+        fontMix = fontMix1
+        break;
+    case 'Mix2':
+        fontMix = fontMix2
+        break;
+    case 'Mix3':
+        fontMix = fontMix3
+        break;
+    case 'Mix4':
+        fontMix = fontMix4
+        break;
+    default:
+        fontMix = fontMix1
+};
+
     moves = 0;
     matches = 0;
     totalSec = 0;
-    /*sec = 00;
-    min = 00;
-    hour = 00;*/
     totalOpenedCards = 0;
 
     myStopFunction(); //stop timer if running
-    //document.getElementById("timer").innerHTML = `${hour} : ${min} : ${sec}`; 
     document.getElementById("timer").innerHTML = `00 : 00 : 00`; //reset timer to 0
 
     //reset moves to 0
@@ -56,46 +75,31 @@ function startGame() {
 
     //remove match open show classes
     const cards = document.querySelectorAll('.card');
-
-    //clear moves
     for (i = 0; i < cards.length; i++) {
         cards[i].classList.remove("match", "open", "show");
     }
+
     //refresh stars 
     stars = document.querySelector('.stars');
     stars.innerHTML = "";
     for (x = 0; x < 5; x++) {
-        //document.querySelector('.stars').innerHTML = `<li><i class="fa fa-star"></i>`;
-        stars.appendChild(document.createElement('li')).className = 'fa fa-star';
+        stars.appendChild(document.createElement('li')).className = 'fas fa-star';
     };
 
     /*make font array from chosen font mix*/
-    const fontsArray = makeDeck(fontMix1);
+    const fontsArray = makeDeck(fontMix);
+    console.log(fontsArray + "is the fontsArray");
 
     /*shuffle the fonts*/
     const shuffledFonts = shuffle(fontsArray);
 
     /*add shuffled font styles to <li> html*/
     for (i = 0; i < cards.length; i++) {
-        const cardImage = `<i class="fa fa-${shuffledFonts[i]}"></i>`;
+        const cardImage = `<i class="fas fa-${shuffledFonts[i]}"></i>`;
         cards[i].innerHTML = cardImage;
         cards[i].addEventListener('click', displaySymbol);
     }
 }
-
-//timer
-/*function timer() {
-    sec += 1;
-    if (sec == 60) {
-        min += 1;
-        sec = 00;
-        if (min == 60) {
-            min = 00;
-            hour += 1;
-        }
-    }
-    document.getElementById("timer").innerHTML = `${hour} : ${min} : ${sec}`;
-}*/
 
 function timer() {
 
@@ -113,35 +117,26 @@ function timer() {
 }
 
 
-/*document.getElementById("timer").innerHTML = `${hour} : ${min} : ${sec}`;
-}*/
-
 function displaySymbol() {
     if (moves === 0) {
         myTimer = setInterval(timer, 1000)
     }; //run timer every second
 
-    /*if (timerActive) {
-        hideSymbol() 
-    };*/
     if (this.classList.contains("show")) {
         alert("You already clicked that. try another");
 
     } else {
         this.classList.add("open", "show");
         openCard = this;
-        //console.log("This is the value of openCard in displaySymbol function (objectHTMLLIElement)--> " + openCard);
         openCardList(openCard);
     }
 }
 
+//check if opened cards are a pair - Call  moveCounter() & starCounter();
 function openCardList(e) {
     pair.push(e);
-    //console.log(a[0].classList + "is value of a[0].classList");
     len = turnedCards.length;
-    //console.log("This is the value of" + len + " length of array");
     len++;
-    //console.log("This is the value of" + len + " length of array after incrementing by 1");
 
     if (len === 1) {
         turnedCards.push(e.innerHTML);
@@ -158,13 +153,9 @@ function openCardList(e) {
 
         } else {
             console.log("Try again"); //add function
-            //console.log("this is the array of a " + a);
-            //console.log("this is a[0]" + a[0].classList, "This is a[1]" + a[1].classList);
             timerActive = true;
-            setTimeout(hideSymbol, 2000);
+            setTimeout(hideSymbol, 1500);
             turnedCards = [];
-            //console.log(e + "  this is what I'm passing to hideSymbol")
-
         }
     }
     moveCounter();
@@ -190,28 +181,26 @@ function lockIntoOpen(a) {
 
 //hide incorrect pair by removing open / show classes. reset pair array a to 0.
 function hideSymbol() {
-    //console.log("This is the value of a at hideSymbol -->" + a);
     timerActive = false;
     pair[0].classList.remove("open", "show");
     pair[1].classList.remove("open", "show");
-    //console.log(" This is a[0]" + a[0].classList, "This is a[1]" + a[1].classList);
     pair = [];
 
     console.log("I removed open & show classes");
 }
 
+//increment move counter only after 2 cards have been turned over
 function moveCounter() {
     moves++;
-    console.log(moves + " --># of moves");
-    //console.log("this is moves remainder 2 -->" + moves % 2);
+    //console.log(moves + " --># of moves");
     (moves === 2) ? (document.querySelector('.moves').innerText = moves / 2 + " Move") : (moves % 2 === 0) ? (document.querySelector('.moves').innerText = (moves / 2 + " Moves")) : console.log("This must be Odd");
 }
 
+// remove stars rating at various #'s of moves. Don't remove star if they make a match. //
 function starCounter() {
     var stars = document.querySelector('.stars');
-    console.log(moves + "this is the current number of moves");
-    console.log(matches + "this is the current number of matches");
-    //star removal -- also. don't remove star if player makes a match)
+    //console.log(moves + "this is the current number of moves");
+    //console.log(matches + "this is the current number of matches");
     switch ((moves) - (matches * 2)) {
         case 20:
             stars.removeChild(stars.children[0]);
@@ -242,12 +231,13 @@ function displayWinMsg() {
     modal.style.display = "block";
     //add star rating and time to modal
     var congrats = document.querySelector(".congrats");
+
     var stats = document.createElement('div');
     stats.className = 'stats';
 
     var starCount = document.querySelector(".stars").getElementsByTagName("li").length
 
-    stats.innerHTML =  `<p>${starCount} Stars</p><p>Time: ${min} min : ${sec} sec</p>`;
+    stats.innerHTML = `<p>${starCount} Stars</p><p>Time: ${parseInt(totalSec/60)%60} min : ${totalSec%60} sec</p>`;
     congrats.appendChild(stats);    
 
     //close the modal when x is clicked
@@ -268,15 +258,59 @@ function myStopFunction() {
     clearInterval(myTimer);
 }
 
-
-
 //restart button + timer 
 startGame(); /*Start Game Over on refresh.  */
 document.querySelector('.restart').addEventListener('click', startGame);
 document.querySelector('.timer').addEventListener('click', myStopFunction);
+/*document.getElementById('dropdown').addEventListener('onchange', function() {var x = mySelect.value;
+   console.log(x + "is the font selection");
+    fontMix = x;
+    console.log(fontMix + "is now");
+    startGame();
+});*/
 
+//var x = document.getElementById("mySelect").options.namedItem("orange").text;
+var mySelect = document.getElementById('dropdown');
+mySelect.onchange = function() {
+    var x = mySelect.value;
+   console.log(x + "is the id value of the font selection");
+    startGame(x);
+ }
+ 
 
+/*
+function chooseIcons() {
+var x = document.getElementById("dropdown").options[0].text;
+console.log(x + "is the font selection");
+fontMix = x;
+startGame();
+}
 
+*/
+
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+/*function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show-dropdown");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show-dropdown')) {
+        openDropdown.classList.remove('show-dropdown');
+      }
+    }
+  }
+}
+*/
+
+    
 
 
 /*

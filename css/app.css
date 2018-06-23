@@ -35,7 +35,7 @@ h1 {
 
 .fa {
   display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
+  font: normal normal normal 14px/1 
   font-size: inherit;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
@@ -62,6 +62,7 @@ h1 {
 }
 
 .deck .card {
+    font-family: 'FontAwesome';
     height: 125px;
     width: 125px;
     background: #2e3d49;
@@ -205,6 +206,51 @@ h1 {
 .stats {
     font-size: .5em;
 }
+
+/*Style for font drop down menu*/
+.dropbtn {
+    background-color: #3498DB;
+    color: white;
+    padding: .6em;
+    font-size: .6em;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 50px;
+    overflow: auto;
+
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: .6em;
+    font-size: .6em;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show-dropdown {display: block;}
+
+
 
 /* The Modal (background) */
 .modal {
