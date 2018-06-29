@@ -287,22 +287,25 @@ function myStopFunction() {
 
 function reveal() {
     let currentIndex = 10;
-    var status = document.getElementById('reveal-mode');
-    console.log(status + "is the status element");
-    if (status.classList.contains("active")) {
+    /*var pudding = this; console.log(pudding + "is pudding");*/
+    /*var status = document.getElementById('reveal-mode');*/
+    if (this.classList.contains("active")) {
         document.querySelector(".deck").classList.remove("reveal");
-        status.classList.remove("active");
+        this.classList.remove("active");
     } else {
-        status.classList.add("active");
+        this.classList.add("active");
         document.querySelector(".deck").classList.add("reveal");
         randomIndex = (Math.floor(Math.random() * currentIndex));
-        /*console.log(randomIndex + "randomIndex for backgroundImage");*/
+        /*console.log(randomIndex + " is the randomIndex for backgroundImage");*/
         /*document.querySelector('.deck.reveal').style(background=`"url('../img/${backGroundMix1[randomIndex]}')"`);*/
         let el=document.querySelector('.deck.reveal');
+        console.log(el + "is the name of the query selector of deck reveal");
         let randomImage = backGroundMix1[randomIndex];
         console.log(randomImage + "is the random background image");
         /*el.style.background = "url('img/`${backGroundMix1[randomIndex]}`')";*/
-        el.style.background = "url(../img/mammoth.png) no-repeat";
+        /*el.style.background = "url(./img/mammoth.jpg) no-repeat cover";*/
+        el.setAttribute('background', 'url(./img/' + randomImage + ') no-repeat !important');
+        el.setAttribute('background-size', 'cover');
         /*el.setAttribute('background', `url(img/${randomImage}`);
         el.setAttribute('background-repeat', 'no-repeat');
         el.setAttribute('background-size', 'cover');*/
