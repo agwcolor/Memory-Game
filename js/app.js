@@ -1,14 +1,16 @@
 const fontMix1 = ["gem", "anchor", "leaf", "bomb", "paper-plane", "bolt", "cube", "bicycle"];
 const fontMix3 = ["grimace", "meh-rolling-eyes", "grin-tongue", "grin-stars", "grin-hearts", "grin-tongue-squint", "grin-wink", "grin-tongue-wink"];
-const fontMix4 = ["bug", "crow", "chess-knight","dove", "fish", "frog", "kiwi-bird","child"];
+const fontMix4 = ["bug", "crow", "chess-knight", "dove", "fish", "frog", "kiwi-bird", "child"];
 const fontMix2 = ["lemon", "seedling", "tooth", "tree", "sun", "stroopwafel", "space-shuttle", "paw"];
+const backGroundMix1 = ["hillyflowers_sm.jpg", "paraglider.jpg", "blue.jpg", "swirl.jpg", "sloth.jpg", "walrus.png", "moose.png", "mammoth.png", "mural.png"];
 let pair = []; //2 element pair array
-let totalOpenedCards = 0; 
+let totalOpenedCards = 0;
 let turnedCards = [];
 let moves; //total moves if divided by 2
 let matches;
 let totalSec = 00;
 let myTimer;
+let flagger = false;
 let fontMix = [];
 
 // Make Deck from chosen font mix
@@ -44,23 +46,23 @@ function shuffle(array) {
  /* Return array of .cards classes*/
 function startGame(e) {
     console.log("This is the value of fontMix at the start of the game" + fontMix);
-    console.log("This is the value of e at the start of the game" + e); 
-    switch(e) {
-    case 'Mix1':
-        fontMix = fontMix1
-        break;
-    case 'Mix2':
-        fontMix = fontMix2
-        break;
-    case 'Mix3':
-        fontMix = fontMix3
-        break;
-    case 'Mix4':
-        fontMix = fontMix4
-        break;
-    default:
-        fontMix = fontMix1
-};
+    console.log("This is the value of e at the start of the game" + e);
+    switch (e) {
+        case 'Mix1':
+            fontMix = fontMix1
+            break;
+        case 'Mix2':
+            fontMix = fontMix2
+            break;
+        case 'Mix3':
+            fontMix = fontMix3
+            break;
+        case 'Mix4':
+            fontMix = fontMix4
+            break;
+        default:
+            fontMix = fontMix1
+    };
 
     moves = 0;
     matches = 0;
@@ -71,7 +73,7 @@ function startGame(e) {
     document.getElementById("timer").innerHTML = `00 : 00 : 00`; //reset timer to 0
 
     //reset moves to 0
-    document.querySelector('.moves').innerText = "zero Moves";
+    document.querySelector('.moves').innerText = "0 Moves";
 
     //remove match open show classes
     const cards = document.querySelectorAll('.card');
@@ -103,14 +105,16 @@ function startGame(e) {
 
 function timer() {
 
-    let hour; let min; let sec;
+    let hour;
+    let min;
+    let sec;
     totalSec += 1;
-    hour = parseInt(totalSec/3600)%24;
-    min = parseInt(totalSec/60)%60;
-    sec = totalSec%60;
+    hour = parseInt(totalSec / 3600) % 24;
+    min = parseInt(totalSec / 60) % 60;
+    sec = totalSec % 60;
 
-    document.getElementById("timer").innerHTML = 
-    ` ${hour< 10 ? (`0${hour}`) : (`${hour}`)} :
+    document.getElementById("timer").innerHTML =
+        ` ${hour< 10 ? (`0${hour}`) : (`${hour}`)} :
       ${min < 10 ? (`0${min}`)  : (`${min}`)}  : 
       ${sec < 10 ? (`0${sec}`)  : (`${sec}`)} 
     ` ;
@@ -118,17 +122,39 @@ function timer() {
 
 
 function displaySymbol() {
+    let flagCheck = document.getElementsByClassName("open");
+    let matchCheck = document.getElementsByClassName("match");
+
+    /*if(flagger) {
+        alert("dude, you are typing too fast" );
+        return false;
+    }*/
+    /*flagger = true; //on with the show*/
+    /*console.log("flagger is " + flagger);*/
     if (moves === 0) {
         myTimer = setInterval(timer, 1000)
     }; //run timer every second
 
-    if (this.classList.contains("show")) {
+    if (this.classList.contains("open")) {
         alert("You already clicked that. try another");
-
     } else {
+
+        /*flagCheck = document.getElementsByClassName("open");
+        matchCheck = document.getElementsByClassName("match");*/
+        console.log("flagCheck - matchCheck -->" + flagCheck.length + "-" + matchCheck.length + "=" + (flagCheck.length-matchCheck.length));
+        console.log("Value of flagCheck before adding open/show classes " + flagCheck.length);
+
+        if ((flagCheck.length <= 1) || ((flagCheck.length+1) - matchCheck.length) <= 2) {
         this.classList.add("open", "show");
+        console.log("Value of flagCheck after adding open show classes " + flagCheck.length);
         openCard = this;
         openCardList(openCard);
+        /*flagger = false;*/
+
+        } else {
+        /*alert("you're typing too fast");*/
+            return false;
+        }
     }
 }
 
@@ -137,6 +163,7 @@ function openCardList(e) {
     pair.push(e);
     len = turnedCards.length;
     len++;
+    console.log("This is the value of len" + len);
 
     if (len === 1) {
         turnedCards.push(e.innerHTML);
@@ -258,11 +285,52 @@ function myStopFunction() {
     clearInterval(myTimer);
 }
 
+function reveal() {
+    let currentIndex = 10;
+    var status = document.getElementById('reveal-mode');
+    console.log(status + "is the status element");
+    if (status.classList.contains("active")) {
+        document.querySelector(".deck").classList.remove("reveal");
+        status.classList.remove("active");
+    } else {
+        status.classList.add("active");
+        document.querySelector(".deck").classList.add("reveal");
+        randomIndex = (Math.floor(Math.random() * currentIndex));
+        /*console.log(randomIndex + "randomIndex for backgroundImage");*/
+        /*document.querySelector('.deck.reveal').style(background=`"url('../img/${backGroundMix1[randomIndex]}')"`);*/
+        let el=document.querySelector('.deck.reveal');
+        let randomImage = backGroundMix1[randomIndex];
+        console.log(randomImage + "is the random background image");
+        /*el.style.background = "url('img/`${backGroundMix1[randomIndex]}`')";*/
+        el.style.background = "url(../img/mammoth.png) no-repeat";
+        /*el.setAttribute('background', `url(img/${randomImage}`);
+        el.setAttribute('background-repeat', 'no-repeat');
+        el.setAttribute('background-size', 'cover');*/
+
+       /* header.setAttribute('style', 'background:url(http://i.imgur.com/htDLyzu.png) !important');*/
+
+        /*document.getElementById('element_id').style.backgroundImage = 'url(imageX.gif)';*/
+        console.log("you now should be active");
+    }
+
+    //make button active color red 
+    /*var
+      $(':input[type="submit"]').prop('disabled', true);
+*/
+    //toggle off to black
+    //if no reveal class, then add reveal class - add image to deck.reveal class attribute background-image  - (randomly generate image 1-10/make array of images in a dir?/find any image that starts w/ a number?)
+    //if reveal class, remove reveal class - startgameover
+
+}
+
 //start game on refresh
 startGame();
 
 //restart button
 document.querySelector('.restart').addEventListener('click', startGame);
+
+//reveal version of the game button
+document.getElementById('reveal-mode').addEventListener('click', reveal);
 
 //stop timer if it's bugging you or distracting
 document.querySelector('.timer').addEventListener('click', myStopFunction);
