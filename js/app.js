@@ -268,7 +268,7 @@ function displayWinMsg() {
 
     var starCount = document.querySelector(".stars").getElementsByTagName("li").length
 
-    stats.innerHTML = `<p>${starCount} Stars</p><p>Time: ${parseInt(totalSec/60)%60} min : ${totalSec%60} sec</p>`;
+    stats.innerHTML = `<p>You have ${starCount} Stars in ${(moves+1)/2} Moves</p><p>Time: ${parseInt(totalSec/60)%60} min : ${totalSec%60} sec</p>`;
     congrats.appendChild(stats);    
 
     //close the modal when x is clicked
