@@ -2,7 +2,7 @@ const fontMix1 = ["gem", "anchor", "leaf", "bomb", "paper-plane", "bolt", "cube"
 const fontMix3 = ["grimace", "meh-rolling-eyes", "grin-tongue", "grin-stars", "grin-hearts", "grin-tongue-squint", "grin-wink", "grin-tongue-wink"];
 const fontMix4 = ["bug", "crow", "chess-knight", "dove", "fish", "frog", "kiwi-bird", "child"];
 const fontMix2 = ["lemon", "seedling", "tooth", "tree", "sun", "stroopwafel", "space-shuttle", "paw"];
-const backGroundMix1 = ["hillyflowers_sm.jpg", "paraglider.jpg", "blue.jpg", "swirl.jpg", "sloth.jpg", "walrus.png", "moose.png", "mammoth.png", "mural.png"];
+const backGroundMix1 = ["hillyflowers_sm.jpg", "paraglider.jpg", "blue.jpg", "swirl.jpg", "sloth.jpg", "walrus.png", "moose.png", "mammoth.png", "mural.png", "grumpy_sm.png", "ohCanada_med.jpg", "eye.jpg"];
 let pair = []; //2 element pair array
 let totalOpenedCards = 0;
 let turnedCards = [];
@@ -204,10 +204,9 @@ function lockIntoOpen(a) {
     pair[1].removeEventListener('click', displaySymbol);
     console.log(totalOpenedCards + " is total # of cards opened");
     if (totalOpenedCards === 16) {
-        console.log("total opened cards" + totalOpenedCards);
+        /*console.log("total opened cards" + totalOpenedCards);*/
         myStopFunction(); // stop timer
         clearIcons();
-        displayWinMsg(); // display win message if all cards opened
     }
 }
 
@@ -275,7 +274,6 @@ function displayWinMsg() {
     //close the modal when x is clicked
     span.onclick = function() {
         modal.style.display = "none";
-        clearIcons();
 
     }
 
@@ -283,7 +281,6 @@ function displayWinMsg() {
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
-            clearIcons();
         }
     }
 }
@@ -292,11 +289,20 @@ function clearIcons() {
     console.log("I'm in the clear Icons function!");
     var i;
     /*var el = document.querySelectorAll(".deck.reveal .card.match");*/
+    
+    var a = document.getElementById("reveal-mode");
 
+    console.log("This is the value of a  " + a);
+    if (a.classList.contains("active")) {
     var el = document.querySelectorAll(".card");
-    console.log("The value of el is the following" + el[0] + "  " + el.length);
+    /*console.log("The value of el is the following" + el[0] + "  " + el.length);*/
     for (i = 0; i < el.length; i++) {
         el[i].innerHTML="";
+    }
+    displayWinMsg();
+    } else {
+        displayWinMsg();
+        startGame();
     }
     /*el[i].classList.add("clearIcons");
     el[i].classList.remove("open","show");
@@ -314,7 +320,7 @@ function myStopFunction() {
 }
 
 function reveal() {
-    let currentIndex = 10;
+    let currentIndex = 12;
     let el=document.querySelector('.deck');
     /*var pudding = this; console.log(pudding + "is pudding");*/
     /*var status = document.getElementById('reveal-mode');*/
@@ -322,12 +328,13 @@ function reveal() {
         this.classList.remove("active");
         el.classList.remove("reveal");
         el.removeAttribute('style', 'background-image');
+        startGame();
 
     } else {
         this.classList.add("active");
         el.classList.add("reveal");
         randomIndex = (Math.floor(Math.random() * currentIndex));
-        /*console.log(randomIndex + " is the randomIndex for backgroundImage");*/
+        console.log(randomIndex + " is the randomIndex for backgroundImage");
         /*document.querySelector('.deck.reveal').style(background=`"url('../img/${backGroundMix1[randomIndex]}')"`);*/
        
         let randomImage = backGroundMix1[randomIndex];
