@@ -1,16 +1,18 @@
+//choice of font mixes displayed in droptown menu
+
 const fontMix1 = ["gem", "anchor", "leaf", "bomb", "paper-plane", "bolt", "cube", "bicycle"];
 const fontMix3 = ["grimace", "meh-rolling-eyes", "grin-tongue", "grin-stars", "grin-hearts", "grin-tongue-squint", "grin-wink", "grin-tongue-wink"];
 const fontMix4 = ["bug", "crow", "chess-knight", "dove", "fish", "frog", "kiwi-bird", "child"];
 const fontMix2 = ["lemon", "seedling", "tooth", "tree", "sun", "stroopwafel", "space-shuttle", "paw"];
 const backGroundMix1 = ["hillyflowers_sm.jpg", "paraglider.jpg", "blue.jpg", "swirl.jpg", "sloth.jpg", "walrus.png", "moose.png", "mammoth.png", "mural.png", "grumpy_sm.png", "ohCanada_med.jpg", "eye.jpg"];
-let pair = []; //2 element pair array
-let totalOpenedCards = 0;
-let turnedCards = [];
+let pair = []; //2 element array for checking for pairs in openCardList()
+let totalOpenedCards = 0; //when total = 16, then games is won.
+let turnedCards = []; //
 let moves; //total moves if divided by 2
 let matches;
-let totalSec = 00;
-let myTimer;
-let fontMix = [];
+let totalSec = 00; //used to calculate hours/min/sec in timer()
+let myTimer; //keeps track of timer to setInterval and clearInterval .
+let fontMix = []; //
 
 // Make Deck from chosen font mix
 function makeDeck(array) {
@@ -43,10 +45,11 @@ function shuffle(array) {
 /*
  * 'Turn over' the cards on the page by removing match/open/show classes
  /* Return array of .cards classes*/
-function startGame(e) {
-    /*console.log("This is the value of fontMix at the start of the game" + fontMix);*/
 
-    switch (e) {
+ //where e is the font chosen by player from drop-down menu
+function startGame(f) {
+    //populate fontMix array with chosen fontMix[1-4] array
+    switch (f) {
         case 'Mix1':
             fontMix = fontMix1
             break;
@@ -62,26 +65,22 @@ function startGame(e) {
         default:
             fontMix = fontMix1
     };
-
+    //reset global variables to default settings at start of each game/on reload
     moves = 0;
     matches = 0;
     totalSec = 0;
     totalOpenedCards = 0;
-
-    myStopFunction(); //stop timer if running and you find it distracting
-
+//stop timer if running and you find it distracting
+    myStopFunction();
     //reset to default play state (black icon & gradient mode) on reload
     document.getElementById('reveal-mode').classList.remove('active');
-
-
     document.querySelector('.deck').classList.remove('reveal');
-    el=document.querySelector('.deck');
-    el.style.background='linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%)';
- 
-// specify the image path here
+
+    el = document.querySelector('.deck');
+    el.style.background = 'linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%)';
 
     //reset timer to 0
-    document.getElementById("timer").innerHTML = `00 : 00 : 00`; 
+    document.getElementById("timer").innerHTML = `00 : 00 : 00`;
 
     //reset moves to 0
     document.querySelector('.moves').innerText = "0 Moves";
@@ -92,7 +91,7 @@ function startGame(e) {
         cards[i].classList.remove("match", "open", "show");
     }
 
-    //refresh stars 
+    //refresh stars
     stars = document.querySelector('.stars');
     stars.innerHTML = "";
     for (x = 0; x < 5; x++) {
@@ -126,38 +125,33 @@ function timer() {
 
     document.getElementById("timer").innerHTML =
         ` ${hour< 10 ? (`0${hour}`) : (`${hour}`)} :
-      ${min < 10 ? (`0${min}`)  : (`${min}`)}  : 
-      ${sec < 10 ? (`0${sec}`)  : (`${sec}`)} 
-    ` ;
+      ${min < 10 ? (`0${min}`)  : (`${min}`)}  :
+      ${sec < 10 ? (`0${sec}`)  : (`${sec}`)}
+    `;
 }
 
 
 function displaySymbol() {
     let flagCheck = document.getElementsByClassName("open");
     let matchCheck = document.getElementsByClassName("match");
-//start timer to increment every second 
+    //start timer to increment every second
     if (moves === 0) {
         myTimer = setInterval(timer, 1000)
-    }; 
+    };
 
-//alerts user if they have already clicked an open card
+    //alerts user if they have already clicked an open card
     if (this.classList.contains("open")) {
         alert("You already clicked that. try another");
     } else {
-       /* console.log("flagCheck - matchCheck -->" + flagCheck.length + "-" + matchCheck.length + "=" + (flagCheck.length-matchCheck.length));
-        console.log("Value of flagCheck before adding open/show classes " + flagCheck.length); */
+        /*makes sure more than 2 cards aren't open at any one time by subtracting total of matched cards from total opened cards. No more than 2 cards should be open at any one time*/
 
-        /*makes sure more than 2 cards aren't open at any one time by subtracting total of matched cards from total opened cards. If the total is more than 2 then the clicked card is not active and 'returns false' . Once the animation for open show match is finished then the cards are active again which clicked*/
-
-        if ((flagCheck.length <= 1) || ((flagCheck.length+1) - matchCheck.length) <= 2) {
-        this.classList.add("open", "show");
-        /*console.log("Value of flagCheck after adding open show classes " + flagCheck.length); */
-        openCard = this;
-        openCardList(openCard);
+        if ((flagCheck.length <= 1) || ((flagCheck.length + 1) - matchCheck.length) <= 2) {
+            this.classList.add("open", "show");
+            openCard = this;
+            openCardList(openCard);
 
         } else {
-        /*alert("you're typing too fast");*/
-            return false;
+            return false; //won't turn card over
         }
     }
 }
@@ -167,8 +161,6 @@ function openCardList(e) {
     pair.push(e);
     len = turnedCards.length;
     len++;
-    console.log("This is the value of len" + len);
-
     if (len === 1) {
         turnedCards.push(e.innerHTML);
     } else {
@@ -196,17 +188,17 @@ function openCardList(e) {
 
 //lock pair open / remove evt listener / add match class
 function lockIntoOpen(a) {
-    console.log("it's a match!");
+    /*console.log("it's a match!");*/
     totalOpenedCards += 2;
     pair[0].classList.add("match");
     pair[1].classList.add("match");
     pair[0].removeEventListener('click', displaySymbol);
     pair[1].removeEventListener('click', displaySymbol);
-    console.log(totalOpenedCards + " is total # of cards opened");
+    /*console.log(totalOpenedCards + " is total # of cards opened");*/
     if (totalOpenedCards === 16) {
-        /*console.log("total opened cards" + totalOpenedCards);*/
-        myStopFunction(); // stop timer
-        clearIcons();
+        /*console.log("total opened cards=" + totalOpenedCards);*/
+        myStopFunction(); // stop timer when game finished
+        clearIcons(); //clear the icons (esp so you can see Reveal version image after modal closes.)
     }
 }
 
@@ -258,7 +250,7 @@ function displayWinMsg() {
     // close fa icon
     var span = document.getElementsByClassName("close")[0];
 
-    //open the modal 
+    //open the modal
     modal.style.display = "block";
     //add star rating and time to modal
     var congrats = document.querySelector(".congrats");
@@ -269,7 +261,7 @@ function displayWinMsg() {
     var starCount = document.querySelector(".stars").getElementsByTagName("li").length
 
     stats.innerHTML = `<p>You have ${starCount} Stars in ${(moves+1)/2} Moves</p><p>Time: ${parseInt(totalSec/60)%60} min : ${totalSec%60} sec</p>`;
-    congrats.appendChild(stats);    
+    congrats.appendChild(stats);
 
     //close the modal when x is clicked
     span.onclick = function() {
@@ -286,44 +278,37 @@ function displayWinMsg() {
 }
 
 function clearIcons() {
-    console.log("I'm in the clear Icons function!");
     var i;
-    /*var el = document.querySelectorAll(".deck.reveal .card.match");*/
-    
     var a = document.getElementById("reveal-mode");
 
     console.log("This is the value of a  " + a);
     if (a.classList.contains("active")) {
-    var el = document.querySelectorAll(".card");
-    /*console.log("The value of el is the following" + el[0] + "  " + el.length);*/
-    for (i = 0; i < el.length; i++) {
-        el[i].innerHTML="";
-    }
-    displayWinMsg();
+        var el = document.querySelectorAll(".card");
+        for (i = 0; i < el.length; i++) {
+            el[i].innerHTML = "";
+        }
+        displayWinMsg();
     } else {
         displayWinMsg();
         startGame();
     }
-    /*el[i].classList.add("clearIcons");
-    el[i].classList.remove("open","show");
-    console.log(el[i].classList);*/
+};
 
-    };
-    /*el.forEach(function() {
-        el.setAttribute('style', 'font-size=0;');    
-    });*/
-
+/*
+*stop the timer if it's distracting or the game is done
+*/
 
 function myStopFunction() {
-    console.log("stop the timer!");
     clearInterval(myTimer);
 }
 
+/*
+*Reveal background image version of game.
+*Cycles through backGroundMix1 array
+*/
 function reveal() {
     let currentIndex = 12;
-    let el=document.querySelector('.deck');
-    /*var pudding = this; console.log(pudding + "is pudding");*/
-    /*var status = document.getElementById('reveal-mode');*/
+    let el = document.querySelector('.deck');
     if (this.classList.contains("active")) {
         this.classList.remove("active");
         el.classList.remove("reveal");
@@ -335,49 +320,26 @@ function reveal() {
         el.classList.add("reveal");
         randomIndex = (Math.floor(Math.random() * currentIndex));
         console.log(randomIndex + " is the randomIndex for backgroundImage");
-        /*document.querySelector('.deck.reveal').style(background=`"url('../img/${backGroundMix1[randomIndex]}')"`);*/
-       
         let randomImage = backGroundMix1[randomIndex];
-        /*console.log(randomImage + "is the random background image");*/
-        /*el.style.background = "url('img/`${backGroundMix1[randomIndex]}`')";*/
-        /*el.style.background = "url(./img/mammoth.jpg) no-repeat cover";*/
-        /*el.setAttribute('background', 'url(./img/' + randomImage + ') no-repeat !important');
-        el.setAttribute('background', 'url(./img/' + randomImage + ') no-repeat !important');*/
-        /*el.setAttribute('background', `url(img/${randomImage}`);
-        el.setAttribute('background-repeat', 'no-repeat');
-        el.setAttribute('background-size', 'cover');*/
-
-       /*el.setAttribute('style', 'background-image:url(./img/' + randomImage + '); background-repeat: no-repeat;background-size: cover;');*/
-       
-
-       el.style.backgroundImage="url(./img/" + randomImage + ")"; 
-       el.style.backgroundRepeat="no-repeat";
-       el.style.backgroundSize="cover";
-
-
-       /*document.getElementById("ElementId").style.backgroundImage=imageUrl*/
-
-
-
-
-        /*document.getElementById('element_id').style.backgroundImage = 'url(imageX.gif)';*/
+        el.style.backgroundImage = "url(./img/" + randomImage + ")";
+        el.style.backgroundRepeat = "no-repeat";
+        el.style.backgroundSize = "cover";
         console.log("you now should be active");
     }
-
-    //make button active color red 
-    /*var
-      $(':input[type="submit"]').prop('disabled', true);
-*/
-
 }
 
-//start game on refresh
+//start game on browser reload or when called
 startGame();
 
-//restart button
+/*
+*
+*Event Listeners set for Icons for game settings
+*
+*/
+//refresh game button
 document.querySelector('.restart').addEventListener('click', startGame);
 
-//reveal version of the game button
+//reveal image version of the game button
 document.getElementById('reveal-mode').addEventListener('click', reveal);
 
 //stop timer if it's bugging you or distracting
@@ -391,20 +353,10 @@ document.getElementById('dropdown').addEventListener('change', function() {
 
 
 
-
-//var x = document.getElementById("mySelect").options.namedItem("orange").text;
-/*var mySelect = document.getElementById('dropdown');
-mySelect.onchange = function() {
-    var x = mySelect.value;
-   console.log(x + "is the id value of the font selection");
-    startGame(x);
- }*/
-
-
 /*
  ***set up the event listener for a card. If a card is clicked:
  ****display the card's symbol (put this functionality in another function that you call from this one)
- 
+
  ***  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  ****  - if the list already has another card, check to see if the two cards match
  ****    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
