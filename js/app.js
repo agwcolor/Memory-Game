@@ -1,81 +1,36 @@
 //choice of font mixes displayed in droptown menu
-
 const fontMix1 = ["gem", "anchor", "leaf", "bomb", "paper-plane", "bolt", "cube", "bicycle"];
 const fontMix3 = ["grimace", "meh-rolling-eyes", "grin-tongue", "grin-stars", "grin-hearts", "grin-tongue-squint", "grin-wink", "grin-tongue-wink"];
 const fontMix4 = ["bug", "crow", "chess-knight", "dove", "fish", "frog", "kiwi-bird", "child"];
 const fontMix2 = ["lemon", "seedling", "tooth", "tree", "sun", "stroopwafel", "space-shuttle", "paw"];
 const backGroundMix1 = ["hillyflowers_sm.jpg", "paraglider.jpg", "blue.jpg", "swirl.jpg", "sloth.jpg", "walrus.png", "moose.png", "mammoth.png", "mural.png", "grumpy_sm.png", "ohCanada_med.jpg", "eye.jpg"];
+
 let pair = []; //2 element array for checking for pairs in openCardList()
 let totalOpenedCards = 0; //when total = 16, then games is won.
-let turnedCards = []; //
-let moves; //total moves if divided by 2
-let matches;
+let turnedCards = []; //keeps track of active cards and is used to compare their innerHTML to determine a match. Length is always 2 or less.
+let moves; //total "moves" if divided by 2, i.e. 1 pair = 2 moves
+let matches; //keeps track of total matches
 let totalSec = 00; //used to calculate hours/min/sec in timer()
-let myTimer; //keeps track of timer to setInterval and clearInterval .
-let fontMix = []; //
+let myTimer; //keeps track of timer for setInterval and clearInterval .
+let fontMix = []; //contains the user-selected or default fontMix ... 1,2,3,or 4.
 
-// Make Deck from chosen font mix
-function makeDeck(array) {
-    console.log("This is the value of fontMix in the makeDeck array" + fontMix);
 
-    let deck = [];
-    for (index in fontMix) {
-        deck.push(fontMix[index]);
-        deck.push(fontMix[index]);
-    }
-    return deck;
-}
 
-// Shuffle function from http://stackoverflow.com/a/2450976
-function shuffle(array) {
-    var currentIndex = array.length,
-        temporaryValue,
-        randomIndex;
 
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-/*
- * 'Turn over' the cards on the page by removing match/open/show classes
- /* Return array of .cards classes*/
-
- //where e is the font chosen by player from drop-down menu
 function startGame(f) {
-    //populate fontMix array with chosen fontMix[1-4] array
-    switch (f) {
-        case 'Mix1':
-            fontMix = fontMix1
-            break;
-        case 'Mix2':
-            fontMix = fontMix2
-            break;
-        case 'Mix3':
-            fontMix = fontMix3
-            break;
-        case 'Mix4':
-            fontMix = fontMix4
-            break;
-        default:
-            fontMix = fontMix1
-    };
-    //reset global variables to default settings at start of each game/on reload
+    /*reset global variables to default settings at start of each game/on reload. The value of f if present is the chosen font mix from the dropdown menu */
     moves = 0;
     matches = 0;
     totalSec = 0;
     totalOpenedCards = 0;
-//stop timer if running and you find it distracting
+
+    //reset timer
     myStopFunction();
-    //reset to default play state (black icon & gradient mode) on reload
+
+    //reset to default play state (not reveal mode) on reload
     document.getElementById('reveal-mode').classList.remove('active');
     document.querySelector('.deck').classList.remove('reveal');
-
+    //reset default background gradient for default play state
     el = document.querySelector('.deck');
     el.style.background = 'linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%)';
 
@@ -98,26 +53,71 @@ function startGame(f) {
         stars.appendChild(document.createElement('li')).className = 'fas fa-star';
     };
 
+    //populate fontMix array with chosen fontMix[1 to 4] array f.
+    //If f undefined (i.e. none chosen from dropdown), default fontMix1 used.
+    switch (f) {
+        case 'Mix1':
+            fontMix = fontMix1
+            break;
+        case 'Mix2':
+            fontMix = fontMix2
+            break;
+        case 'Mix3':
+            fontMix = fontMix3
+            break;
+        case 'Mix4':
+            fontMix = fontMix4
+            break;
+        default:
+            fontMix = fontMix1 //default if user doesn't choose a font
+    };
+
     /*make font array from chosen font mix*/
     const fontsArray = makeDeck(fontMix);
-    console.log(fontsArray + "is the fontsArray");
-
     /*shuffle the fonts*/
     const shuffledFonts = shuffle(fontsArray);
-
-    /*add shuffled font styles to <li> html*/
+    /*add shuffled font styles to card <li> innerHTML*/
     for (i = 0; i < cards.length; i++) {
         const cardImage = `<i class="fas fa-${shuffledFonts[i]}"></i>`;
         cards[i].innerHTML = cardImage;
+        /*if card clicked, display the symbol on the card via displaySymbol()*/
         cards[i].addEventListener('click', displaySymbol);
     }
 }
 
-function timer() {
+// Make Deck from chosen font mix
+function makeDeck(array) {
+    //array is the value of fontMix in the makeDeck array;
+    let deck = [];
+    for (index in fontMix) {
+        //do push 2x to add pair of icons, not just one.
+        deck.push(fontMix[index]);
+        deck.push(fontMix[index]);
+    }
+    return deck;
+}
 
-    let hour;
-    let min;
-    let sec;
+/*Shuffle function from http://stackoverflow.com/a/2450976*/
+function shuffle(array) {
+    var currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
+
+    while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
+
+/*calculate & display hour/minute/sec from totalSec. activated in displaySymbol() when user clicks first card of the game*/
+function timer() {
+    let hour, min, sec;
     totalSec += 1;
     hour = parseInt(totalSec / 3600) % 24;
     min = parseInt(totalSec / 60) % 60;
@@ -130,7 +130,7 @@ function timer() {
     `;
 }
 
-
+/*display Symbol when user clicks card. Allow only 2 cards open at once*/
 function displaySymbol() {
     let flagCheck = document.getElementsByClassName("open");
     let matchCheck = document.getElementsByClassName("match");
@@ -148,6 +148,7 @@ function displaySymbol() {
         if ((flagCheck.length <= 1) || ((flagCheck.length + 1) - matchCheck.length) <= 2) {
             this.classList.add("open", "show");
             openCard = this;
+            console.log(openCard + "is the value of openCard")
             openCardList(openCard);
 
         } else {
@@ -156,33 +157,31 @@ function displaySymbol() {
     }
 }
 
-//check if opened cards are a pair - Call  moveCounter() & starCounter();
-function openCardList(e) {
+/*check if opened cards are a pair - Increment moves & decrease stars if necessary  moveCounter() & starCounter();*/
+function openCardList(e) { //e is the opened li card element
     pair.push(e);
-    len = turnedCards.length;
+    len = turnedCards.length; //keeps track of total of cards active
     len++;
     if (len === 1) {
-        turnedCards.push(e.innerHTML);
+        turnedCards.push(e.innerHTML); //innerHTML of li card element
     } else {
         turnedCards.push(e.innerHTML);
-        // console.log(turnedCards + " len is 2");
-
+        //compare innerHMTL of opened card elements stored in turnedCards array
         if (turnedCards[0] === turnedCards[1]) {
-            console.log("this is a match!");
-            matches++;
-            turnedCards = [];
-            lockIntoOpen(pair);
-            pair = [];
-
+            //console.log("this is a match!");
+            matches++; //increment matches
+            turnedCards = []; //reset turnedCards
+            lockIntoOpen(pair); //adds match styles and removes eventListener. Checks for win.
+            pair = []; //reset pair after match style applied in lockIntoOpen()
         } else {
-            console.log("Try again"); //add function
-            timerActive = true;
+            // console.log("Try again")
+            /*timerActive = true;*/
             setTimeout(hideSymbol, 1500);
             turnedCards = [];
         }
     }
-    moveCounter();
-    starCounter();
+    moveCounter(); //update moves counter
+    starCounter(); //update star rating
 
 }
 
@@ -190,40 +189,33 @@ function openCardList(e) {
 function lockIntoOpen(a) {
     /*console.log("it's a match!");*/
     totalOpenedCards += 2;
-    pair[0].classList.add("match");
+    pair[0].classList.add("match");  //add match class to both opened cards
     pair[1].classList.add("match");
-    pair[0].removeEventListener('click', displaySymbol);
+    pair[0].removeEventListener('click', displaySymbol); //make them unclickable
     pair[1].removeEventListener('click', displaySymbol);
-    /*console.log(totalOpenedCards + " is total # of cards opened");*/
-    if (totalOpenedCards === 16) {
-        /*console.log("total opened cards=" + totalOpenedCards);*/
+    if (totalOpenedCards === 16) { //if game is won, ie all 16 cards turned over
         myStopFunction(); // stop timer when game finished
         clearIcons(); //clear the icons (esp so you can see Reveal version image after modal closes.)
     }
 }
 
-//hide incorrect pair by removing open / show classes. reset pair array a to 0.
+//hide incorrect pair by removing open / show classes. reset pair array to 0.
 function hideSymbol() {
-    timerActive = false;
+    /*timerActive = false;*/
     pair[0].classList.remove("open", "show");
     pair[1].classList.remove("open", "show");
     pair = [];
-
-    console.log("I removed open & show classes");
 }
 
 //increment move counter only after 2 cards have been turned over
 function moveCounter() {
     moves++;
-    //console.log(moves + " --># of moves");
-    (moves === 2) ? (document.querySelector('.moves').innerText = moves / 2 + " Move") : (moves % 2 === 0) ? (document.querySelector('.moves').innerText = (moves / 2 + " Moves")) : console.log("This must be Odd");
+    (moves === 2) ? (document.querySelector('.moves').innerText = moves / 2 + " Move") : (moves % 2 === 0) ? (document.querySelector('.moves').innerText = (moves / 2 + " Moves")) : "" /*(console.log("This must be Odd"))*/ ;
 }
 
 // remove stars rating at various #'s of moves. Don't remove star if they make a match. //
 function starCounter() {
     var stars = document.querySelector('.stars');
-    //console.log(moves + "this is the current number of moves");
-    //console.log(matches + "this is the current number of matches");
     switch ((moves) - (matches * 2)) {
         case 20:
             stars.removeChild(stars.children[0]);
@@ -242,34 +234,31 @@ function starCounter() {
             break;
     }
 }
-//
+
+/*Modal for win message*/
 function displayWinMsg() {
-    //  the modal
     var modal = document.getElementById('winModal');
 
-    // close fa icon
+    // close button
     var span = document.getElementsByClassName("close")[0];
 
     //open the modal
     modal.style.display = "block";
-    //add star rating and time to modal
-    var congrats = document.querySelector(".congrats");
 
+    //add star rating, moves & time to modal
+    var congrats = document.querySelector(".congrats");
     var stats = document.createElement('div');
     stats.className = 'stats';
-
     var starCount = document.querySelector(".stars").getElementsByTagName("li").length
-
     stats.innerHTML = `<p>You have ${starCount} Stars in ${(moves+1)/2} Moves</p><p>Time: ${parseInt(totalSec/60)%60} min : ${totalSec%60} sec</p>`;
     congrats.appendChild(stats);
 
     //close the modal when x is clicked
     span.onclick = function() {
         modal.style.display = "none";
-
     }
 
-    // if click outside modal, also close it
+    // close if clicked outside of modal
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
@@ -277,38 +266,46 @@ function displayWinMsg() {
     }
 }
 
+/*
+ *checks to see if reveal-mode is 'active'.
+ *If reveal-mode active, show modal then clear icons to reveal picture when it is closed; otherwise, just display modal & restart game when modal is closed
+ */
+
 function clearIcons() {
     var i;
     var a = document.getElementById("reveal-mode");
-
-    console.log("This is the value of a  " + a);
     if (a.classList.contains("active")) {
+        //remove all icons for reveal mode active
         var el = document.querySelectorAll(".card");
         for (i = 0; i < el.length; i++) {
             el[i].innerHTML = "";
         }
         displayWinMsg();
     } else {
+        //display modal and restart game for standard mode
         displayWinMsg();
         startGame();
     }
 };
 
 /*
-*stop the timer if it's distracting or the game is done
-*/
-
+ *stop the timer if it's distracting or the game is done
+ */
 function myStopFunction() {
     clearInterval(myTimer);
 }
 
 /*
-*Reveal background image version of game.
-*Cycles through backGroundMix1 array
-*/
+ *REVEAL background image version of game.
+ *Cycles through backGroundMix1 array
+ */
 function reveal() {
-    let currentIndex = 12;
+    /*let currentIndex = 12;*/
+    /*Note : initial value of 'this' is document.getElementById('reveal-mode');*/
+
+    let currentIndex = backGroundMix1.length;
     let el = document.querySelector('.deck');
+    //if reveal-mode active (red), change to standard mode.
     if (this.classList.contains("active")) {
         this.classList.remove("active");
         el.classList.remove("reveal");
@@ -316,15 +313,16 @@ function reveal() {
         startGame();
 
     } else {
+        //add reveal mode & styling.
         this.classList.add("active");
         el.classList.add("reveal");
+        //choose random background from backGroundMix1
         randomIndex = (Math.floor(Math.random() * currentIndex));
-        console.log(randomIndex + " is the randomIndex for backgroundImage");
         let randomImage = backGroundMix1[randomIndex];
+        //add html img url & styling for backGroundMix1[randomIndex]
         el.style.backgroundImage = "url(./img/" + randomImage + ")";
         el.style.backgroundRepeat = "no-repeat";
         el.style.backgroundSize = "cover";
-        console.log("you now should be active");
     }
 }
 
@@ -332,35 +330,20 @@ function reveal() {
 startGame();
 
 /*
-*
-*Event Listeners set for Icons for game settings
-*
-*/
-//refresh game button
+ *Event Listeners for game options:
+ *restart, reveal mode, timer, & FontMix dropdown
+ */
+//restart game button
 document.querySelector('.restart').addEventListener('click', startGame);
 
-//reveal image version of the game button
+//REVEAL background image version of the game button
 document.getElementById('reveal-mode').addEventListener('click', reveal);
 
 //stop timer if it's bugging you or distracting
 document.querySelector('.timer').addEventListener('click', myStopFunction);
 
-//choose font mix for game, dropdown menu --- (1 - 4)
+//choose font mix for game, dropdown menu --- fontMix (1 - 4)
 document.getElementById('dropdown').addEventListener('change', function() {
     var x = this.value;
     startGame(x);
 });
-
-
-
-/*
- ***set up the event listener for a card. If a card is clicked:
- ****display the card's symbol (put this functionality in another function that you call from this one)
-
- ***  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- ****  - if the list already has another card, check to see if the two cards match
- ****    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- ****    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
