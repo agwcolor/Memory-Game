@@ -17,16 +17,16 @@ body {
 }
 
 body {
-    background: #fff url('../img/geometry2.png');
-    /* Background pattern from Subtle Patterns */
-    font: 1.6vw Coda;
+    background: #fff url('../img/animals_grn.png');
+    background-size: 50vw;
+    font: 2.3vw Coda;
 }
 
 
 h1 {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 300;
-    /*font: 30px 300 'Open Sans', sans-serif;*/
+    font-family: 'Fjalla One', sans-serif;
+    font-weight: 200
+    color: #f36;
 }
 
 .container {
@@ -47,15 +47,12 @@ h1 {
     vertical-align: -webkit-baseline-middle;
 }
 
-
-
 /*
  * Styles for the deck of cards
  */
 
 .deck {
     width: 40%;
-    /*min-height: 680px;*/
     background: linear-gradient(160deg, #0cb 0%, #a7c 100%);
     background-size: auto;
     padding: .3em;
@@ -66,7 +63,6 @@ h1 {
     align-items: center;
     margin: 0 0 3em;
 }
-
 
 
 /* separate div for each row for responsive flexbox design*/
@@ -109,7 +105,7 @@ h1 {
 .deck .card.open {
     transform: rotateY();
     background: #0bd;
-    background: linear-gradient(270deg, #344, #86b, #b69, #dbd);
+    background: linear-gradient(270deg, #ba4, #e35, #c18);
     cursor: default;
     animation-name: stretch;
     animation-duration: 1.5s;
@@ -142,7 +138,7 @@ h1 {
     padding: 0px;
     border-radius: 10px;
     box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
-    background-image: url(./img/blue.jpg);
+    /*background-image: url(./img/blue.jpg);*/
     /*default*/
     background-repeat: no-repeat;
     background-size: cover;
@@ -150,12 +146,11 @@ h1 {
 }
 
 
-
 .deck.reveal .card {
     width: 25%;
     min-height: 50px;
     margin: 0;
-    border: .4px solid white;
+    border: .4px solid #0cb;
     box-shadow: none;
 }
 

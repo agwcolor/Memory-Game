@@ -1,20 +1,29 @@
-//choice of font mixes displayed in droptown menu
+//choice of font mixes available to player in droptown menu
 const fontMix1 = ["gem", "anchor", "leaf", "bomb", "paper-plane", "bolt", "cube", "bicycle"];
 const fontMix3 = ["grimace", "meh-rolling-eyes", "grin-tongue", "grin-stars", "grin-hearts", "grin-tongue-squint", "grin-wink", "grin-tongue-wink"];
 const fontMix4 = ["bug", "crow", "chess-knight", "dove", "fish", "frog", "kiwi-bird", "child"];
 const fontMix2 = ["lemon", "seedling", "tooth", "tree", "sun", "stroopwafel", "space-shuttle", "paw"];
-const backGroundMix1 = ["hillyflowers_sm.jpg", "paraglider.jpg", "blue.jpg", "swirl.jpg", "sloth.jpg", "walrus.png", "moose.png", "mammoth.png", "mural.png", "grumpy_sm.png", "ohCanada_med.jpg", "eye.jpg"];
 
 let pair = []; //2 element array for checking for pairs in openCardList()
-let totalOpenedCards = 0; //when total = 16, then games is won.
+let totalOpenedCards = 0; //counter, when total = 16, then games is won.
 let turnedCards = []; //keeps track of active cards and is used to compare their innerHTML to determine a match. Length is always 2 or less.
 let moves; //total "moves" if divided by 2, i.e. 1 pair = 2 moves
 let matches; //keeps track of total matches
 let totalSec = 00; //used to calculate hours/min/sec in timer()
-let myTimer; //keeps track of timer for setInterval and clearInterval .
+let myTimer; //keeps track of timer to start & stop (setInterval and clearInterval) .
 let fontMix = []; //contains the user-selected or default fontMix ... 1,2,3,or 4.
 
-
+const backGroundMix1 = ["blue", "paraglider", "dog", "eye", "sloth", "hillyflowers", "moose", "mammoth", "mural", "grumpy", "ohCanada", "orb", "spaceCat"];
+//responsive background image - randomImage - in responsiveBG()
+const screenWidths = [
+    window.matchMedia("(max-width: 480px)"),
+    window.matchMedia("(min-width: 481px) and (max-width: 640px)"),
+    window.matchMedia("(min-width: 641px) and (max-width: 768px)"),
+    window.matchMedia("(min-width: 769px)")
+];
+const currentIndex = backGroundMix1.length;
+let randomIndex;
+let randomImage;
 
 
 function startGame(f) {
@@ -26,13 +35,17 @@ function startGame(f) {
 
     //reset timer
     myStopFunction();
+    //set the random background image (randomImage), for if/when user switches to reveal mode
+    randomIndex = (Math.floor(Math.random() * currentIndex));
+    randomImage = backGroundMix1[randomIndex];
+    responsiveBG();
 
-    //reset to default play state (not reveal mode) on reload
+    //reset to default play state (NOT reveal mode) on reload
     document.getElementById('reveal-mode').classList.remove('active');
     document.querySelector('.deck').classList.remove('reveal');
     //reset default background gradient for default play state
     el = document.querySelector('.deck');
-    el.style.background = 'linear-gradient(160deg, #02ccba 0%, #aa7ecd 100%)';
+    el.style.background = 'linear-gradient(160deg, #02ccba 0%, #c1a01d 100%)';
 
     //reset timer to 0
     document.getElementById("timer").innerHTML = `00 : 00 : 00`;
@@ -85,7 +98,7 @@ function startGame(f) {
     }
 }
 
-// Make Deck from chosen font mix
+/*Make Deck from chosen font mix*/
 function makeDeck(array) {
     //array is the value of fontMix in the makeDeck array;
     let deck = [];
@@ -115,7 +128,7 @@ function shuffle(array) {
 }
 
 
-/*calculate & display hour/minute/sec from totalSec. activated in displaySymbol() when user clicks first card of the game*/
+/*calculate & display hour/minute/sec from totalSec. See displaySymbol() when user clicks first card of the game*/
 function timer() {
     let hour, min, sec;
     totalSec += 1;
@@ -130,7 +143,7 @@ function timer() {
     `;
 }
 
-/*display Symbol when user clicks card. Allow only 2 cards open at once*/
+/*Display Symbol when user clicks card. Allow only 2 cards open at once*/
 function displaySymbol() {
     let flagCheck = document.getElementsByClassName("open");
     let matchCheck = document.getElementsByClassName("match");
@@ -143,12 +156,13 @@ function displaySymbol() {
     if (this.classList.contains("open")) {
         alert("You already clicked that. try another");
     } else {
-        /*makes sure more than 2 cards aren't open at any one time by subtracting total of matched cards from total opened cards. No more than 2 cards should be open at any one time*/
+        /*make sure that more than 2 cards aren't open at any one time by subtracting total of matched cards from total opened cards.*/
 
         if ((flagCheck.length <= 1) || ((flagCheck.length + 1) - matchCheck.length) <= 2) {
             this.classList.add("open", "show");
             openCard = this;
-            console.log(openCard + "is the value of openCard")
+            //console.log((((flagCheck.length+1) - matchCheck.length) <= 2));
+            //console.log(openCard + "is the value of openCard")
             openCardList(openCard);
 
         } else {
@@ -175,47 +189,45 @@ function openCardList(e) { //e is the opened li card element
             pair = []; //reset pair after match style applied in lockIntoOpen()
         } else {
             // console.log("Try again")
-            /*timerActive = true;*/
             setTimeout(hideSymbol, 1500);
             turnedCards = [];
         }
     }
     moveCounter(); //update moves counter
     starCounter(); //update star rating
-
 }
 
-//lock pair open / remove evt listener / add match class
+
+/*lock pair open / remove event listener / add match class*/
 function lockIntoOpen(a) {
-    /*console.log("it's a match!");*/
     totalOpenedCards += 2;
-    pair[0].classList.add("match");  //add match class to both opened cards
+    pair[0].classList.add("match"); //add 'match' class to both opened cards
     pair[1].classList.add("match");
     pair[0].removeEventListener('click', displaySymbol); //make them unclickable
     pair[1].removeEventListener('click', displaySymbol);
-    if (totalOpenedCards === 16) { //if game is won, ie all 16 cards turned over
+    if (totalOpenedCards === 16) { //game is won, ie all 16 cards turned over
         myStopFunction(); // stop timer when game finished
-        clearIcons(); //clear the icons (esp so you can see Reveal version image after modal closes.)
+        clearIcons(); //clear the icons (esp so you can see Reveal version image (if active) after modal closes.)
     }
 }
 
-//hide incorrect pair by removing open / show classes. reset pair array to 0.
+
+/*hide incorrect pair by removing open / show classes. reset pair array to 0.*/
 function hideSymbol() {
-    /*timerActive = false;*/
     pair[0].classList.remove("open", "show");
     pair[1].classList.remove("open", "show");
     pair = [];
 }
 
-//increment move counter only after 2 cards have been turned over
+/*increment 'Moves' counter only after 2 cards have been turned over*/
 function moveCounter() {
     moves++;
     (moves === 2) ? (document.querySelector('.moves').innerText = moves / 2 + " Move") : (moves % 2 === 0) ? (document.querySelector('.moves').innerText = (moves / 2 + " Moves")) : "" /*(console.log("This must be Odd"))*/ ;
 }
 
-// remove stars rating at various #'s of moves. Don't remove star if they make a match. //
+/*remove stars rating at various #'s of moves. Don't remove star if they make a match. */
 function starCounter() {
-    var stars = document.querySelector('.stars');
+    let stars = document.querySelector('.stars');
     switch ((moves) - (matches * 2)) {
         case 20:
             stars.removeChild(stars.children[0]);
@@ -237,19 +249,19 @@ function starCounter() {
 
 /*Modal for win message*/
 function displayWinMsg() {
-    var modal = document.getElementById('winModal');
+    let modal = document.getElementById('winModal');
 
     // close button
-    var span = document.getElementsByClassName("close")[0];
+    let span = document.getElementsByClassName("close")[0];
 
     //open the modal
     modal.style.display = "block";
 
     //add star rating, moves & time to modal
-    var congrats = document.querySelector(".congrats");
-    var stats = document.createElement('div');
+    let congrats = document.querySelector(".congrats");
+    let stats = document.createElement('div');
     stats.className = 'stats';
-    var starCount = document.querySelector(".stars").getElementsByTagName("li").length
+    let starCount = document.querySelector(".stars").getElementsByTagName("li").length
     stats.innerHTML = `<p>You have ${starCount} Stars in ${(moves+1)/2} Moves</p><p>Time: ${parseInt(totalSec/60)%60} min : ${totalSec%60} sec</p>`;
     congrats.appendChild(stats);
 
@@ -266,17 +278,17 @@ function displayWinMsg() {
     }
 }
 
+
 /*
  *checks to see if reveal-mode is 'active'.
  *If reveal-mode active, show modal then clear icons to reveal picture when it is closed; otherwise, just display modal & restart game when modal is closed
  */
-
 function clearIcons() {
-    var i;
-    var a = document.getElementById("reveal-mode");
+    let i;
+    let a = document.getElementById("reveal-mode");
     if (a.classList.contains("active")) {
         //remove all icons for reveal mode active
-        var el = document.querySelectorAll(".card");
+        let el = document.querySelectorAll(".card");
         for (i = 0; i < el.length; i++) {
             el[i].innerHTML = "";
         }
@@ -288,11 +300,37 @@ function clearIcons() {
     }
 };
 
-/*
- *stop the timer if it's distracting or the game is done
- */
+
+/*stop the timer if it's distracting or the game is done*/
 function myStopFunction() {
     clearInterval(myTimer);
+}
+
+/*evt listener set on this function, on window resize
+*applies responsive background image (backgroundImage) for reveal mode
+*/
+function responsiveBG() {
+    let el = document.querySelector('.deck');
+    if (el.classList.contains("reveal")) {
+        //if in reveal mode, select responsive background image
+        if (screenWidths[0].matches) {
+            console.log(" (max-width: 480px)");
+            el.style.backgroundImage = "url(./img/" + randomImage + "-480.jpg)";
+        } else if (screenWidths[1].matches) {
+            console.log(" (max-width: 640px)");
+            el.style.backgroundImage = "url(./img/" + randomImage + "-640.jpg)";
+        } else if (screenWidths[2].matches) {
+            console.log(" (max-width: 768px)");
+            el.style.backgroundImage = "url(./img/" + randomImage + "-768.jpg)";
+        } else if (screenWidths[3].matches) {
+            console.log(" (min-width: 769px)");
+            el.style.backgroundImage = "url(./img/" + randomImage + "-1024.jpg)";
+        }
+        el.style.backgroundRepeat = "no-repeat";
+        el.style.backgroundSize = "cover";
+    } else {
+        return false;
+    }
 }
 
 /*
@@ -300,9 +338,7 @@ function myStopFunction() {
  *Cycles through backGroundMix1 array
  */
 function reveal() {
-    /*let currentIndex = 12;*/
     /*Note : initial value of 'this' is document.getElementById('reveal-mode');*/
-
     let currentIndex = backGroundMix1.length;
     let el = document.querySelector('.deck');
     //if reveal-mode active (red), change to standard mode.
@@ -313,26 +349,32 @@ function reveal() {
         startGame();
 
     } else {
+
         //add reveal mode & styling.
         this.classList.add("active");
         el.classList.add("reveal");
-        //choose random background from backGroundMix1
-        randomIndex = (Math.floor(Math.random() * currentIndex));
-        let randomImage = backGroundMix1[randomIndex];
-        //add html img url & styling for backGroundMix1[randomIndex]
-        el.style.backgroundImage = "url(./img/" + randomImage + ")";
-        el.style.backgroundRepeat = "no-repeat";
-        el.style.backgroundSize = "cover";
+        responsiveBG();
+        //choose random background from backGroundMix
+        //document.addEventListener("DOMContentLoaded", function(e) {}
     }
 }
 
-//start game on browser reload or when called
-startGame();
-
-/*
+/*********************************************
  *Event Listeners for game options:
  *restart, reveal mode, timer, & FontMix dropdown
- */
+ *add event listeners to screeWidths for background Images in reveal mode
+ *********************************************/
+
+/*add evt listeners for responsive background when in 'reveal' mode*/
+document.addEventListener("DOMContentLoaded", function(e) {
+    for (var i = 0; i < screenWidths.length; i++) {
+        screenWidths[i].addListener(responsiveBG);
+    }
+});
+
+/*start game*/
+startGame();
+
 //restart game button
 document.querySelector('.restart').addEventListener('click', startGame);
 
@@ -344,6 +386,6 @@ document.querySelector('.timer').addEventListener('click', myStopFunction);
 
 //choose font mix for game, dropdown menu --- fontMix (1 - 4)
 document.getElementById('dropdown').addEventListener('change', function() {
-    var x = this.value;
+    let x = this.value;
     startGame(x);
 });

@@ -7,14 +7,25 @@
 
 ## Instructions
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+Memory Game is the traditional game where you match 2 cards at a time.
 
-To get started, open `js/app.js` and start building out the app's functionality
+1. This version has 2 modes -- the defalut Classic Mode & Image Reveal mode.  To access the Image reveal mode, where a background image is revealed at the end of the game, select the picture icon in the icon bar. It will turn red when it is in Reveal Mode. There are approximately 12 background images of which one is randomly chosen for each game.
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+2. The player also has the option of choosing from 4 different card sets from the Mix drop down menu.
+
+3. To reload the game, press the reset button.
+
+4. I put the timer at the bottom to make it less distracting.
+
+5. I implemented functionality so that more that 2 cards at once are not selectable.
+
+6. Star rating decreases with move increments.
+
+7. TODO : refine responsive background images using Window.matchMedia. This still needs some attention as I'm not satisfied with the result. Used Grunt to generate the files. 
+
 
 ## Contributing
 
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
+Ideas regarding JavaScript media queries were found in Stack Overflow & W3 Schools.
 
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+Background image photos taken by Abbie & using Uzu & Enlight Photofox for effects. Background hand drawn to vector to png by Abbie. Ceramic monster models used in photos created by CNewlin.com.
