@@ -32,20 +32,16 @@ function startGame(f) {
     matches = 0;
     totalSec = 0;
     totalOpenedCards = 0;
+    pair = [];
+    turnedCards = [];
 
     //reset timer
     myStopFunction();
+
     //set the random background image (randomImage), for if/when user switches to reveal mode
     randomIndex = (Math.floor(Math.random() * currentIndex));
     randomImage = backGroundMix1[randomIndex];
     responsiveBG();
-
-    //reset to default play state (NOT reveal mode) on reload
-    document.getElementById('reveal-mode').classList.remove('active');
-    document.querySelector('.deck').classList.remove('reveal');
-    //reset default background gradient for default play state
-    el = document.querySelector('.deck');
-    el.style.background = 'linear-gradient(160deg, #02ccba 0%, #c1a01d 100%)';
 
     //reset timer to 0
     document.getElementById("timer").innerHTML = `00 : 00 : 00`;
@@ -65,6 +61,9 @@ function startGame(f) {
     for (x = 0; x < 5; x++) {
         stars.appendChild(document.createElement('li')).className = 'fas fa-star';
     };
+
+    //get current value of dropdown menu
+    f = document.getElementById('dropdown').value;
 
     //populate fontMix array with chosen fontMix[1 to 4] array f.
     //If f undefined (i.e. none chosen from dropdown), default fontMix1 used.
@@ -96,6 +95,15 @@ function startGame(f) {
         /*if card clicked, display the symbol on the card via displaySymbol()*/
         cards[i].addEventListener('click', displaySymbol);
     }
+
+    //browser refresh resets mode to standard game . (Reload button conserves chosen state Standard or Reveal Mode (w/ 'active' class))
+    if (document.getElementById('reveal-mode').classList.contains('active')) {
+        responsiveBG();
+    } else {
+        el = document.querySelector('.deck');
+        el.style.background = 'linear-gradient(160deg, #02ccba 0%, #c1a01d 100%)';
+    }
+
 }
 
 /*Make Deck from chosen font mix*/
@@ -125,7 +133,6 @@ function shuffle(array) {
 
     return array;
 }
-
 
 /*calculate & display hour/minute/sec from totalSec. See displaySymbol() when user clicks first card of the game*/
 function timer() {
@@ -160,8 +167,6 @@ function displaySymbol() {
         if ((flagCheck.length <= 1) || ((flagCheck.length + 1) - matchCheck.length) <= 2) {
             this.classList.add("open", "show");
             openCard = this;
-            //console.log((((flagCheck.length+1) - matchCheck.length) <= 2));
-            //console.log(openCard + "is the value of openCard")
             openCardList(openCard);
 
         } else {
@@ -227,22 +232,26 @@ function moveCounter() {
 /*remove stars rating at various #'s of moves. Don't remove star if they make a match. */
 function starCounter() {
     let stars = document.querySelector('.stars');
-    switch ((moves) - (matches * 2)) {
-        case 20:
-            stars.removeChild(stars.children[0]);
-            break;
-        case 30:
-            stars.removeChild(stars.children[0]);
-            break;
-        case 40:
-            stars.removeChild(stars.children[0]);
-            break;
-        case 50:
-            stars.removeChild(stars.children[0]);
-            break;
-        case 60:
-            stars.removeChild(stars.children[0]);
-            break;
+    let starsTotal = stars.children.length;
+    if (starsTotal > 1) {
+
+        switch ((moves) - (matches * 2)) {
+            case 20:
+                stars.removeChild(stars.children[0]);
+                break;
+            case 30:
+                stars.removeChild(stars.children[0]);
+                break;
+            case 40:
+                stars.removeChild(stars.children[0]);
+                break;
+            case 50:
+                stars.removeChild(stars.children[0]);
+                break;
+            case 60:
+                stars.removeChild(stars.children[0]);
+                break;
+        }
     }
 }
 
@@ -306,8 +315,8 @@ function myStopFunction() {
 }
 
 /*evt listener set on this function, on window resize
-*applies responsive background image (backgroundImage) for reveal mode
-*/
+ *applies responsive background image (backgroundImage) for reveal mode
+ */
 function responsiveBG() {
     let el = document.querySelector('.deck');
     if (el.classList.contains("reveal")) {
@@ -337,23 +346,22 @@ function responsiveBG() {
  *Cycles through backGroundMix1 array
  */
 function reveal() {
-    /*Note : initial value of 'this' is document.getElementById('reveal-mode');*/
     let currentIndex = backGroundMix1.length;
     let el = document.querySelector('.deck');
+    let revealState = document.getElementById('reveal-mode');
     //if reveal-mode active (red), change to standard mode.
-    if (this.classList.contains("active")) {
-        this.classList.remove("active");
+    if (revealState.classList.contains("active")) {
+        revealState.classList.remove("active");
         el.classList.remove("reveal");
         el.removeAttribute('style', 'background-image');
-        startGame();
 
     } else {
-
         //add reveal mode & styling.
-        this.classList.add("active");
+        revealState.classList.add("active");
         el.classList.add("reveal");
         responsiveBG();
     }
+    startGame();
 }
 
 /*********************************************
