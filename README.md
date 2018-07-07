@@ -1,7 +1,7 @@
 # Memory Game Project
 
 ## Table of Contents
-
+* [Dependencies](#dependencies)
 * [Instructions](#instructions)
 * [Contributing](#contributing)
 
