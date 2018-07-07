@@ -104,8 +104,7 @@ function makeDeck(array) {
     let deck = [];
     for (index in fontMix) {
         //do push 2x to add pair of icons, not just one.
-        deck.push(fontMix[index]);
-        deck.push(fontMix[index]);
+        deck.push(fontMix[index], fontMix[index]);
     }
     return deck;
 }
@@ -154,7 +153,7 @@ function displaySymbol() {
 
     //alerts user if they have already clicked an open card
     if (this.classList.contains("open")) {
-        alert("You already clicked that. try another");
+        return false;
     } else {
         /*make sure that more than 2 cards aren't open at any one time by subtracting total of matched cards from total opened cards.*/
 
@@ -354,8 +353,6 @@ function reveal() {
         this.classList.add("active");
         el.classList.add("reveal");
         responsiveBG();
-        //choose random background from backGroundMix
-        //document.addEventListener("DOMContentLoaded", function(e) {}
     }
 }
 

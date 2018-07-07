@@ -5,6 +5,16 @@
 * [Instructions](#instructions)
 * [Contributing](#contributing)
 
+
+## Dependencies
+The game requires access to both Google Fonts & FontAwesome. Links to these fonts are referenced in the index.html file.
+       ```
+       https://use.fontawesome.com/releases/v5.1.0/css/all.css
+	   https://fonts.googleapis.com/css?family=Coda
+       https://fonts.googleapis.com/css?family=Montserrat&effect=neon
+       https://fonts.googleapis.com/css?family=Fjalla+One
+       ```
+
 ## Instructions
 
 Memory Game is the traditional game where you match 2 cards at a time.
